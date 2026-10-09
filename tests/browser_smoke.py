@@ -46,9 +46,11 @@ def run():
             page.goto(f'http://127.0.0.1:{server.server_port}/qiuzhao/')
             page.wait_for_function("() => document.querySelector('#status').options.length===9")
             assert page.locator('#profile').input_value() == '', 'Public app must not prefill private materials'
+            page.locator('#settings-open').click()
             page.locator('#profile').fill('人工测试材料：Figma、品牌设计、包装设计、视觉系统。')
             page.locator('#save-profile').click()
             page.wait_for_function("() => JSON.parse(localStorage.getItem('qiuzhao:records:v1')).profile.includes('人工测试')")
+            page.locator('#settings-close').click()
             page.locator('#source-url').fill('https://example.com/design-job')
             page.locator('#parse').click()
             page.wait_for_function("() => document.querySelector('#toast').textContent.includes('复制岗位正文')")
@@ -94,11 +96,13 @@ def run():
                 assert cells['J2'].find('m:f', NS) is None, 'Text must never become a formula'
                 validation = sheet.find('.//m:dataValidation', NS)
                 assert validation.attrib['sqref'] == 'I2:I10000'
+            page.locator('#settings-open').click()
             with page.expect_download() as result:
                 page.locator('#backup').click()
             backup = Path(directory)/'backup.json'
             result.value.save_as(str(backup))
             assert len(json.loads(backup.read_text())['jobs']) == 1
+            page.locator('#settings-close').click()
             page.on('dialog', lambda dialog: dialog.accept())
             page.locator('[data-delete]').click()
             page.wait_for_function("() => document.querySelector('#total').textContent==='0'")
