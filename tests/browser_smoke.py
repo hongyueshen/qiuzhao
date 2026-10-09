@@ -1,4 +1,6 @@
 """Run with a Python installation containing Playwright; uses stdlib for XLSX assertions."""
+import base64
+import gzip
 import json
 import tempfile
 import threading
@@ -118,10 +120,29 @@ def run():
             assert fresh.locator('#profile').input_value() == ''
             assert fresh.locator('#total').inner_text() == '0'
             other.close()
+            # Private first-use link fills a fresh browser, strips its fragment,
+            # and preserves any profile / records already saved in a browser.
+            welcome = base64.urlsafe_b64encode(gzip.compress(json.dumps({'version':1,'profile':'专属入口测试：Figma、包装设计'}, ensure_ascii=False).encode())).decode().rstrip('=')
+            private_url = f'http://127.0.0.1:{server.server_port}/qiuzhao/#welcome={welcome}'
+            personal = browser.new_context()
+            first = personal.new_page()
+            first.goto(private_url)
+            first.wait_for_function("document.querySelector('#profile').value.includes('专属入口测试')")
+            assert '#' not in first.url
+            assert first.locator('#total').inner_text() == '0'
+            personal.close()
+            page.goto(private_url)
+            page.wait_for_function("document.querySelector('#profile').value.includes('人工测试材料')")
+            assert page.locator('#total').inner_text() == '1'
+            assert '#' not in page.url
+            page.goto(f'http://127.0.0.1:{server.server_port}/qiuzhao/#welcome=invalid')
+            page.wait_for_function("document.querySelector('#status').options.length===9")
+            assert page.locator('#profile').input_value().startswith('人工测试材料')
+            assert not any('welcome=' in url for url in requests), 'Personal fragment must not be sent to server'
             assert all(urlsplit(url).hostname == '127.0.0.1' for url in requests), requests
             assert not any('/api/' in url for url in requests), requests
             assert not errors, errors
-            print('PASS: GitHub Pages subpath, body parsing, 80% coverage, evidence, persistence, Excel contents/dropdown/formula safety, backup restore, search/filter, mobile layout, isolated private data, no API or third-party requests.')
+            print('PASS: Pages subpath, parsing, matching, Excel, backups, mobile layout, private first-use link, existing data preserved, invalid fragment handled, no personal fragment/API/third-party requests.')
         finally:
             browser.close()
             server.shutdown()

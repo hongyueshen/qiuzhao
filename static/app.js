@@ -18,4 +18,4 @@ $('export-excel').onclick=async()=>{const button=$('export-excel');button.disabl
 $('backup').onclick=async()=>{try{await Tracker.backup();toast('备份已下载，请私密保存')}catch(error){toast(error.message)}};
 $('restore').onchange=async event=>{try{if(await Tracker.restore(event.target.files[0])){await reload(true);toast('画像与投递记录已恢复')}}catch(error){toast(error.message)}finally{event.target.value=''}};
 window.addEventListener('storage',event=>{if(event.key==='qiuzhao:records:v1')reload(true).catch(error=>toast(error.message))});
-reload(true).catch(error=>toast(error.message));
+reload(true).then(()=>{if(window.TrackerWelcomeMessage)toast(window.TrackerWelcomeMessage)}).catch(error=>toast(error.message));

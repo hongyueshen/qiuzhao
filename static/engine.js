@@ -6,7 +6,41 @@
   const ready = fetch('./terms.json').then(response => {
     if (!response.ok) throw Error('岗位词库加载失败，请刷新页面');
     return response.json();
-  }).then(value => { vocabulary = value; });
+  }).then(async value => { vocabulary = value; await applyWelcome(); });
+
+  async function applyWelcome() {
+    const encoded = new URLSearchParams(location.hash.slice(1)).get('welcome');
+    if (!encoded) return;
+    // Fragments are not sent in HTTP requests. Remove the personal payload
+    // from the address bar before loading it; never publish it as a site asset.
+    history.replaceState(null, '', location.pathname + location.search);
+    try {
+      if (encoded.length > 40000) throw Error();
+      const packed = Uint8Array.from(atob(encoded.replace(/-/g, '+').replace(/_/g, '/')), char => char.charCodeAt(0));
+      const stream = new Blob([packed]).stream().pipeThrough(new DecompressionStream('gzip'));
+      const reader = stream.getReader();
+      let bytes = new Uint8Array(0);
+      while (true) {
+        const {done, value} = await reader.read();
+        if (done) break;
+        if (bytes.length + value.length > 50000) { await reader.cancel(); throw Error(); }
+        const next = new Uint8Array(bytes.length + value.length);
+        next.set(bytes); next.set(value, bytes.length); bytes = next;
+      }
+      const welcome = JSON.parse(new TextDecoder('utf-8', {fatal:true}).decode(bytes));
+      if (welcome.version !== 1 || typeof welcome.profile !== 'string' || !welcome.profile.trim() || welcome.profile.length > 12000) throw Error();
+      const data = read();
+      if (data.profile.trim()) {
+        window.TrackerWelcomeMessage = '已保留你在当前浏览器保存的画像，未覆盖已有内容';
+        return;
+      }
+      data.profile = welcome.profile;
+      write(data);
+      window.TrackerWelcomeMessage = '已自动填入你的简历与作品集画像，可以直接添加岗位';
+    } catch (error) {
+      window.TrackerWelcomeMessage = '专属入口未能读取，请使用新版浏览器或联系我重新生成入口';
+    }
+  }
 
   function read() {
     let value;
