@@ -1,0 +1,237 @@
+{
+  "terms": [
+    "Python",
+    "Java",
+    "JavaScript",
+    "TypeScript",
+    "C++",
+    "C#",
+    "Go",
+    "SQL",
+    "MySQL",
+    "Redis",
+    "Linux",
+    "Docker",
+    "Kubernetes",
+    "React",
+    "Vue",
+    "Spring",
+    "Git",
+    "算法",
+    "数据结构",
+    "机器学习",
+    "深度学习",
+    "大模型",
+    "数据分析",
+    "数据挖掘",
+    "产品设计",
+    "用户研究",
+    "需求分析",
+    "项目管理",
+    "运营",
+    "市场营销",
+    "内容策划",
+    "沟通",
+    "团队协作",
+    "英语",
+    "Excel",
+    "Power BI",
+    "Tableau",
+    "财务",
+    "会计",
+    "金融",
+    "统计",
+    "本科",
+    "硕士",
+    "博士"
+  ],
+  "aliases": {
+    "品牌设计": [
+      "品牌设计",
+      "branding",
+      "brand design"
+    ],
+    "视觉设计": [
+      "视觉设计",
+      "视觉传达",
+      "visual design",
+      "graphic design"
+    ],
+    "品牌识别": [
+      "品牌识别",
+      "品牌视觉识别",
+      "品牌形象",
+      "brand identity",
+      "VI设计",
+      "VI 设计"
+    ],
+    "视觉系统": [
+      "视觉系统",
+      "设计系统",
+      "design system"
+    ],
+    "品牌策略": [
+      "品牌策略",
+      "品牌战略",
+      "brand strategy"
+    ],
+    "品牌传播": [
+      "品牌传播",
+      "品牌沟通",
+      "brand communication"
+    ],
+    "编辑设计": [
+      "编辑设计",
+      "编辑出版",
+      "美术编辑",
+      "editorial design",
+      "排版"
+    ],
+    "包装设计": [
+      "包装设计",
+      "packaging"
+    ],
+    "字体设计": [
+      "字体设计",
+      "typography"
+    ],
+    "动态视觉": [
+      "动态视觉",
+      "动效",
+      "动画",
+      "motion design",
+      "motion graphics"
+    ],
+    "视频剪辑": [
+      "视频剪辑",
+      "视频编辑",
+      "视频后期",
+      "video editing"
+    ],
+    "视觉陈列": [
+      "视觉陈列",
+      "visual merchandising"
+    ],
+    "社交媒体": [
+      "社交媒体",
+      "新媒体",
+      "social media"
+    ],
+    "用户体验": [
+      "用户体验",
+      "UX",
+      "user experience"
+    ],
+    "界面设计": [
+      "界面设计",
+      "UI",
+      "user interface"
+    ],
+    "交互设计": [
+      "交互设计",
+      "interaction design"
+    ],
+    "服务设计": [
+      "服务设计",
+      "service design"
+    ],
+    "工业设计": [
+      "工业设计",
+      "industrial design"
+    ],
+    "产品策划": [
+      "产品策划",
+      "产品规划",
+      "product planning"
+    ],
+    "竞品分析": [
+      "竞品分析",
+      "competitive analysis"
+    ],
+    "原型设计": [
+      "原型设计",
+      "prototyping",
+      "prototype"
+    ],
+    "作品集": [
+      "作品集",
+      "portfolio"
+    ],
+    "创意策划": [
+      "创意策划",
+      "品牌概念策划",
+      "creative concept"
+    ],
+    "供应商管理": [
+      "供应商管理",
+      "供应商",
+      "vendor"
+    ],
+    "成本控制": [
+      "成本控制",
+      "cost control"
+    ],
+    "Photoshop": [
+      "Photoshop",
+      "PS"
+    ],
+    "Illustrator": [
+      "Illustrator",
+      "AI软件"
+    ],
+    "InDesign": [
+      "InDesign",
+      "ID软件"
+    ],
+    "After Effects": [
+      "After Effects",
+      "AE"
+    ],
+    "Premiere Pro": [
+      "Premiere Pro",
+      "Premiere",
+      "PR软件"
+    ],
+    "Figma": [
+      "Figma"
+    ],
+    "Sketch": [
+      "Sketch"
+    ],
+    "Blender": [
+      "Blender"
+    ],
+    "Cinema 4D": [
+      "Cinema 4D",
+      "C4D"
+    ],
+    "AI辅助设计": [
+      "AI辅助设计",
+      "AI 辅助设计",
+      "AI设计",
+      "AI 设计",
+      "生成式AI",
+      "Midjourney",
+      "ChatGPT"
+    ],
+    "日语": [
+      "日语",
+      "Japanese"
+    ],
+    "法语": [
+      "法语",
+      "French"
+    ]
+  },
+  "statuses": [
+    "待投递",
+    "已投递",
+    "笔试",
+    "一面",
+    "二面",
+    "终面",
+    "Offer",
+    "已拒绝",
+    "已撤回"
+  ]
+}
