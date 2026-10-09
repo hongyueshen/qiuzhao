@@ -179,4 +179,10 @@
     download(await workbook.xlsx.writeBuffer(), 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', '秋招进度.xlsx');
   }
   window.Tracker = {api,backup,restore,exportExcel};
+  window.addEventListener('hashchange', () => {
+    ready.then(async () => {
+      await applyWelcome();
+      window.dispatchEvent(new Event('tracker-welcome'));
+    }).catch(() => {});
+  });
 })();

@@ -44,14 +44,14 @@ def run():
         page.on('request', lambda request: requests.append(request.url))
         try:
             page.goto(f'http://127.0.0.1:{server.server_port}/qiuzhao/')
-            page.wait_for_function("document.querySelector('#status').options.length===9")
+            page.wait_for_function("() => document.querySelector('#status').options.length===9")
             assert page.locator('#profile').input_value() == '', 'Public app must not prefill private materials'
             page.locator('#profile').fill('人工测试材料：Figma、品牌设计、包装设计、视觉系统。')
             page.locator('#save-profile').click()
-            page.wait_for_function("JSON.parse(localStorage.getItem('qiuzhao:records:v1')).profile.includes('人工测试')")
+            page.wait_for_function("() => JSON.parse(localStorage.getItem('qiuzhao:records:v1')).profile.includes('人工测试')")
             page.locator('#source-url').fill('https://example.com/design-job')
             page.locator('#parse').click()
-            page.wait_for_function("document.querySelector('#toast').textContent.includes('复制岗位正文')")
+            page.wait_for_function("() => document.querySelector('#toast').textContent.includes('复制岗位正文')")
             text = '品牌设计师\n岗位职责：Python 工具维护\n任职要求：Figma、品牌设计、包装设计、视觉系统、Blender\n福利待遇：英语培训'
             page.locator('#source-text').fill(text)
             page.locator('#parse').click()
@@ -62,16 +62,16 @@ def run():
             page.locator('#status').select_option('已投递')
             page.locator('#notes').fill('=HYPERLINK("https://example.com")')
             page.locator('#job-form button[type=submit]').click()
-            page.wait_for_function("document.querySelector('#total').textContent==='1'")
+            page.wait_for_function("() => document.querySelector('#total').textContent==='1'")
             assert page.locator('.score').inner_text().startswith('80%')
             assert 'Python' not in page.locator('.chips').inner_text()
             assert '英语' not in page.locator('.chips').inner_text()
             page.locator('.job details summary').click()
             assert '人工测试材料' in page.locator('.job details').inner_text()
             page.locator('[data-status]').select_option('一面')
-            page.wait_for_function("document.querySelector('#interview').textContent==='1'")
+            page.wait_for_function("() => document.querySelector('#interview').textContent==='1'")
             page.reload()
-            page.wait_for_function("document.querySelector('#total').textContent==='1'")
+            page.wait_for_function("() => document.querySelector('#total').textContent==='1'")
             assert page.locator('[data-status]').input_value() == '一面'
             with page.expect_download() as result:
                 page.locator('#export-excel').click()
@@ -101,9 +101,9 @@ def run():
             assert len(json.loads(backup.read_text())['jobs']) == 1
             page.on('dialog', lambda dialog: dialog.accept())
             page.locator('[data-delete]').click()
-            page.wait_for_function("document.querySelector('#total').textContent==='0'")
+            page.wait_for_function("() => document.querySelector('#total').textContent==='0'")
             page.locator('#restore').set_input_files(str(backup))
-            page.wait_for_function("document.querySelector('#total').textContent==='1'")
+            page.wait_for_function("() => document.querySelector('#total').textContent==='1'")
             page.locator('#search').fill('不存在')
             assert page.locator('.job').count() == 0
             page.locator('#search').fill('包装')
@@ -116,7 +116,7 @@ def run():
             other = browser.new_context()
             fresh = other.new_page()
             fresh.goto(f'http://127.0.0.1:{server.server_port}/qiuzhao/')
-            fresh.wait_for_function("document.querySelector('#status').options.length===9")
+            fresh.wait_for_function("() => document.querySelector('#status').options.length===9")
             assert fresh.locator('#profile').input_value() == ''
             assert fresh.locator('#total').inner_text() == '0'
             other.close()
@@ -127,16 +127,18 @@ def run():
             personal = browser.new_context()
             first = personal.new_page()
             first.goto(private_url)
-            first.wait_for_function("document.querySelector('#profile').value.includes('专属入口测试')")
+            first.wait_for_function("() => document.querySelector('#profile').value.includes('专属入口测试')")
             assert '#' not in first.url
             assert first.locator('#total').inner_text() == '0'
             personal.close()
             page.goto(private_url)
-            page.wait_for_function("document.querySelector('#profile').value.includes('人工测试材料')")
+            page.wait_for_function("() => !location.hash")
+            page.wait_for_function("() => document.querySelector('#profile').value.includes('人工测试材料')")
             assert page.locator('#total').inner_text() == '1'
             assert '#' not in page.url
             page.goto(f'http://127.0.0.1:{server.server_port}/qiuzhao/#welcome=invalid')
-            page.wait_for_function("document.querySelector('#status').options.length===9")
+            page.wait_for_function("() => !location.hash")
+            page.wait_for_function("() => document.querySelector('#status').options.length===9")
             assert page.locator('#profile').input_value().startswith('人工测试材料')
             assert not any('welcome=' in url for url in requests), 'Personal fragment must not be sent to server'
             assert all(urlsplit(url).hostname == '127.0.0.1' for url in requests), requests
