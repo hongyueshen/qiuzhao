@@ -45,7 +45,16 @@ function showDetails(job){
 }
 $('job-details-close').onclick=()=>$('job-details').close();
 
-function edit(job={}){$('job-id').value=job.id||'';fields.forEach(f=>$(f).value=job[f]||(f==='status'?'待投递':''));$('parse-warning').textContent=job.warning||'请按实际情况核对岗位要求、投递日期与进度。';$('editor-title').textContent=job.id?'编辑岗位':'核对岗位信息';$('editor').showModal()}
+function edit(job={}){
+  const now=new Date();
+  const today=[now.getFullYear(),String(now.getMonth()+1).padStart(2,'0'),String(now.getDate()).padStart(2,'0')].join('-');
+  const defaults={applied_at:today,status:'已投递'};
+  $('job-id').value=job.id||'';
+  fields.forEach(field=>$(field).value=job.id?(job[field]??''):(job[field]||defaults[field]||''));
+  $('parse-warning').textContent=job.warning||'请按实际情况核对岗位要求、投递日期与进度。';
+  $('editor-title').textContent=job.id?'编辑岗位':'核对岗位信息';
+  $('editor').showModal();
+}
 $('parse').onclick=async()=>{const button=$('parse');button.disabled=true;button.textContent='正在读取与解析…';try{const job=await api('/api/parse',{url:$('source-url').value,text:$('source-text').value});edit(job)}catch(error){toast(error.message)}finally{button.disabled=false;button.textContent='解析岗位 →'}};
 $('manual').onclick=()=>edit({url:$('source-url').value,requirements:$('source-text').value});$('close').onclick=()=>$('editor').close();
 $('job-form').onsubmit=async event=>{event.preventDefault();try{const data=Object.fromEntries(fields.map(f=>[f,$(f).value]));data.id=$('job-id').value;await api('/api/save',data);$('editor').close();await reload();toast('岗位已保存')}catch(error){toast(error.message)}};
