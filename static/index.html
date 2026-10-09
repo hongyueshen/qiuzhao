@@ -6,7 +6,7 @@
   <meta name="referrer" content="no-referrer">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self'; img-src 'self' data:; object-src 'none'; base-uri 'self'; form-action 'none'">
   <title>秋招手账 · CAREER STUDIO</title>
-  <link rel="stylesheet" href="./style.css?v=20261009-layout">
+  <link rel="stylesheet" href="./style.css?v=20261009-cards">
 </head>
 <body>
   <header class="topbar">
@@ -57,6 +57,10 @@
       <p class="muted footnote">数据仅保存在当前浏览器，请定期备份。Excel 是快照；更换设备时，可在“画像与备份”中用 JSON 备份迁移记录。</p>
     </section>
   </main>
+  <dialog id="job-details" aria-labelledby="job-details-title">
+    <div class="section-head"><h2 id="job-details-title">岗位详情</h2><button id="job-details-close" class="text-button" aria-label="关闭岗位详情">关闭 ×</button></div>
+    <div id="job-details-content"></div>
+  </dialog>
   <dialog id="settings" aria-labelledby="settings-title">
     <div class="section-head"><h2 id="settings-title">画像与备份</h2><button id="settings-close" class="text-button" aria-label="关闭画像与备份">关闭 ×</button></div>
     <section class="settings-section">
@@ -89,6 +93,6 @@
     </form>
   </dialog>
   <div id="toast" role="status" aria-live="polite"></div>
-  <script src="./vendor/exceljs.min.js"></script><script src="./engine.js"></script><script src="./app.js?v=20261009-layout"></script>
+  <script src="./vendor/exceljs.min.js"></script><script src="./engine.js"></script><script src="./app.js?v=20261009-cards"></script>
 </body>
 </html>
