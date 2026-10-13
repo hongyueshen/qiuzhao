@@ -55,7 +55,7 @@ function edit(job={}){
   $('editor-title').textContent=job.id?'编辑岗位':'核对岗位信息';
   $('editor').showModal();
 }
-$('parse').onclick=async()=>{const button=$('parse');button.disabled=true;button.textContent='正在读取与解析…';try{const job=await api('/api/parse',{url:$('source-url').value,text:$('source-text').value});edit(job)}catch(error){toast(error.message)}finally{button.disabled=false;button.textContent='解析岗位 →'}};
+$('parse').onclick=async()=>{const button=$('parse');button.disabled=true;button.textContent='正在读取与解析…';try{const job=await api('/api/parse',{url:$('source-url').value,text:$('source-text').value});edit(job);$('source-url').value='';$('source-text').value=''}catch(error){toast(error.message)}finally{button.disabled=false;button.textContent='解析岗位 →'}};
 $('manual').onclick=()=>edit({url:$('source-url').value,requirements:$('source-text').value});$('close').onclick=()=>$('editor').close();
 $('job-form').onsubmit=async event=>{event.preventDefault();try{const data=Object.fromEntries(fields.map(f=>[f,$(f).value]));data.id=$('job-id').value;await api('/api/save',data);$('editor').close();await reload();toast('岗位已保存')}catch(error){toast(error.message)}};
 $('save-profile').onclick=async()=>{try{await api('/api/profile',{profile:$('profile').value});await reload();toast('画像已保存，匹配度已更新')}catch(error){toast(error.message)}};
