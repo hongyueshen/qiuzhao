@@ -132,6 +132,17 @@
     if (path === '/api/delete') {
       data.jobs = data.jobs.filter(job => String(job.id) !== String(input.id)); write(data); return {ok:true};
     }
+    if (path === '/api/reorder') {
+      const ids = input.ids;
+      if (!Array.isArray(ids) || !ids.length || ids.some(id => typeof id !== 'string') || new Set(ids).size !== ids.length) throw Error('排序记录无效');
+      const byId = new Map(data.jobs.map(job => [String(job.id), job]));
+      if (ids.some(id => !byId.has(id))) throw Error('岗位列表已变化，请刷新后重新排序');
+      // Reorder only the visible subset, preserving hidden jobs in their slots.
+      const selected = new Set(ids);
+      let index = 0;
+      data.jobs = data.jobs.map(job => selected.has(String(job.id)) ? byId.get(ids[index++]) : job);
+      write(data); return {ok:true};
+    }
     throw Error('操作不存在');
   }
   async function backup() {

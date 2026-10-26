@@ -256,7 +256,7 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_GET(self):
         path = urlsplit(self.path).path
-        if path in ('/', '/style.css', '/app.js', '/engine.js', '/terms.json', '/vendor/exceljs.min.js'):
+        if path in ('/', '/style.css', '/app.js', '/engine.js', '/terms.json', '/vendor/exceljs.min.js', '/vendor/sortable.min.js'):
             file = ROOT / 'static' / ('index.html' if path == '/' else path[1:])
             kind = 'application/json; charset=utf-8' if path.endswith('.json') else 'application/javascript; charset=utf-8' if path.endswith('.js') else 'text/css; charset=utf-8' if path.endswith('.css') else 'text/html; charset=utf-8'
             return self.send(file.read_bytes(), kind=kind)

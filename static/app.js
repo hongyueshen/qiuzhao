@@ -9,9 +9,9 @@ async function api(path,data){return window.Tracker.api(path,data)}
 async function reload(initial=false){state=await api('/api/state');if(initial){$('profile').value=state.profile;$('status').innerHTML=state.statuses.map(s=>`<option>${esc(s)}</option>`).join('');$('filter').innerHTML='<option value="">全部进度</option>'+state.statuses.map(s=>`<option>${esc(s)}</option>`).join('')}render()}
 function jobCard(job){
   const id=esc(job.id);
-  return `<article class="job">
+  return `<article class="job${job.status==='已拒绝'?' is-rejected':''}" data-job-id="${id}">
     <div class="job-head">
-      <div class="job-field job-title"><span class="job-field-label">职位名称</span><h3>${esc(job.title)}</h3></div>
+      <div class="job-field job-title"><button type="button" class="drag-handle" aria-label="拖动排序：${esc(job.title)}" title="上下拖动调整顺序，也可用上下方向键移动">⠿</button><div><span class="job-field-label">职位名称</span><h3>${esc(job.title)}</h3></div></div>
       <div class="job-field"><span class="job-field-label">公司</span><div class="job-value job-company">${esc(job.company||'待补充')}</div></div>
       <div class="job-field" title="岗位要求关键词覆盖率，不代表录取概率"><span class="job-field-label">匹配度</span><div class="score">${job.score===null?'—':job.score+'%'}</div></div>
       <div class="job-field"><span class="job-field-label">投递日期</span><div class="job-value job-date">${esc(job.applied_at||'尚未记录')}</div></div>
@@ -67,4 +67,40 @@ $('backup').onclick=async()=>{try{await Tracker.backup();toast('备份已下载�
 $('restore').onchange=async event=>{try{if(await Tracker.restore(event.target.files[0])){await reload(true);toast('画像与投递记录已恢复')}}catch(error){toast(error.message)}finally{event.target.value=''}};
 window.addEventListener('storage',event=>{if(event.key==='qiuzhao:records:v1')reload(true).catch(error=>toast(error.message))});
 window.addEventListener('tracker-welcome',()=>reload(true).then(()=>{if(window.TrackerWelcomeMessage)toast(window.TrackerWelcomeMessage)}).catch(error=>toast(error.message)));
+let orderSaving=false;
+async function saveJobOrder(focusId){
+  orderSaving=true;
+  jobSorter.option('disabled',true);
+  try{
+    const ids=Array.from($('jobs').querySelectorAll('.job'),card=>card.dataset.jobId);
+    await api('/api/reorder',{ids});
+    await reload();
+    if(focusId)$('jobs').querySelector(`[data-job-id="${CSS.escape(focusId)}"] .drag-handle`)?.focus({preventScroll:true});
+    toast('卡片顺序已保存');
+  }catch(error){
+    await reload().catch(()=>{});
+    toast(error.message);
+  }finally{
+    orderSaving=false;
+    jobSorter.option('disabled',false);
+  }
+}
+const jobSorter=new Sortable($('jobs'),{
+  draggable:'.job',handle:'.drag-handle',animation:150,
+  ghostClass:'job-sort-ghost',chosenClass:'job-sort-chosen',dragClass:'job-sort-drag',
+  fallbackTolerance:5,scroll:true,scrollSensitivity:70,scrollSpeed:12,
+  onEnd:event=>{if(event.oldDraggableIndex!==event.newDraggableIndex)saveJobOrder();}
+});
+$('jobs').addEventListener('keydown',event=>{
+  const handle=event.target.closest('.drag-handle');
+  if(!handle||!['ArrowUp','ArrowDown'].includes(event.key))return;
+  event.preventDefault();
+  if(orderSaving)return;
+  const card=handle.closest('.job');
+  const target=event.key==='ArrowUp'?card.previousElementSibling:card.nextElementSibling;
+  if(!target?.matches('.job'))return;
+  if(event.key==='ArrowUp')$('jobs').insertBefore(card,target);
+  else $('jobs').insertBefore(target,card);
+  saveJobOrder(card.dataset.jobId);
+});
 reload(true).then(()=>{if(window.TrackerWelcomeMessage)toast(window.TrackerWelcomeMessage)}).catch(error=>toast(error.message));
